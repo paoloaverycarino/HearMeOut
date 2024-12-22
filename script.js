@@ -41,4 +41,5 @@ function insertCharacterWithImage(name, show, up_votes, down_votes, imagePath) {
     });
   }
 
-  insertCharacterWithImage('Android Robot', 'Android', 0, 0, 'Android_Robot.png');  
+  // Insert the character with the image
+  insertCharacterWithImage("Ice Bear", 'We Bare Bears', 0, 0, 'images/icebear.png');  
