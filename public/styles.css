@@ -116,7 +116,7 @@ body {
     border-radius: 8px;
     margin: 0 auto;
     display: block;
-    background-color: #f0f0f0; /* Optional: adds a background color to empty space */
+    background-color: #f2f5ea; /* Optional: adds a background color to empty space */
 }
 
 .submit-button {
@@ -131,7 +131,7 @@ body {
 }
 
 .submit-button:hover {
-    background-color: #2c363f;
+    background-color: #212930;
 }
 
 @font-face {
@@ -172,7 +172,7 @@ body {
     top: 20px;
     width: 250px;
     height: 400px;
-    background-color: #f5f5f5;
+    background-color: #d6dbd2;
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -187,7 +187,7 @@ body {
 }
 
 .comment {
-    background-color: white;
+    background-color: #f2f5ea;
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 5px;
@@ -205,14 +205,13 @@ body {
 .comment-form {
     position: sticky;
     bottom: 0;
-    background-color: #f5f5f5;
+    background-color: #f2f5ea;
     padding-top: 10px;
 }
 
 #commentInput {
-    width: 100%;
+    width: 93%;
     height: 60px;
-    margin-bottom: 10px;
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -222,7 +221,7 @@ body {
 #submitComment {
     width: 100%;
     padding: 8px;
-    background-color: #007bff;
+    background-color: #bbc7a4;
     color: white;
     border: none;
     border-radius: 4px;
@@ -230,5 +229,5 @@ body {
 }
 
 #submitComment:hover {
-    background-color: #0056b3;
+    background-color: #a8b392;
 }
