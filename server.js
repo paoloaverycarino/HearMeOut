@@ -3,9 +3,21 @@ const multer = require('multer');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
+const port = process.env.PORT || 3000;
 
 const app = express();
 const upload = multer();
+
+// Your routes and middleware here
+app.get('/', (req, res) => {
+    res.send('Hello, World!');
+  });
+  
+  // Start server
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+  
 
 // Database connection
 let db = new sqlite3.Database("characters.db", (err) => {
