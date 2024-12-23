@@ -2,7 +2,6 @@ const express = require('express');
 const multer = require('multer');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
-const fs = require('fs');
 
 const app = express();
 const upload = multer();
@@ -13,6 +12,15 @@ let db = new sqlite3.Database("characters.db", (err) => {
         console.error(err.message);
     } else {
         console.log("Connected to the character database.");
+    }
+});
+
+// Add a new database connection for submissions
+let submissionsDb = new sqlite3.Database("submissions.db", (err) => {
+    if (err) {
+        console.error(err.message);
+    } else {
+        console.log("Connected to the submissions database.");
     }
 });
 
@@ -153,6 +161,8 @@ function insertCharacterWithImage(name, show, up_votes, down_votes, imagePath) {
         });
     });
 }
+
+insertCharacterWithImage('Andy', 'Tran', 0, 0, 'public/images/chillguy.jpg');
     
 function getVotePercentages(characterName) {
     db.get('SELECT up_votes, down_votes FROM characters WHERE name = ?', [characterName], (err, row) => {
