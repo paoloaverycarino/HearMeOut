@@ -1,7 +1,7 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get form data
-    $character_name = $_POST['character-name'];
+    $character_name = $_POST['character_name'];
     $source = $_POST['source'];
 
     // Handle the image upload
@@ -23,24 +23,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (in_array($image_ext, ['jpg', 'jpeg', 'png', 'gif'])) {
                 // Move the image to the uploads folder
                 if (move_uploaded_file($image_tmp_name, $image_destination)) {
-                    // Connect to the database
-                    $mysqli = new mysqli('localhost', 'username', 'password', 'database_name');
-                    if ($mysqli->connect_error) {
-                        die("Connection failed: " . $mysqli->connect_error);
-                    }
+                    // Connect to the SQLite database
+                    $db = new SQLite3('characters.db');
+
+                    // Create the table if it doesn't exist
+                    $db->exec("CREATE TABLE IF NOT EXISTS submissions (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        character_name TEXT NOT NULL,
+                        source TEXT,
+                        image_path TEXT,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    )");
 
                     // Insert the data into the database
-                    $stmt = $mysqli->prepare("INSERT INTO characters (character_name, source, image_path) VALUES (?, ?, ?)");
-                    $stmt->bind_param("sss", $character_name, $source, $image_destination);
+                    $stmt = $db->prepare("INSERT INTO submissions (character_name, source, image_path) VALUES (:character_name, :source, :image_path)");
+                    $stmt->bindValue(':character_name', $character_name, SQLITE3_TEXT);
+                    $stmt->bindValue(':source', $source, SQLITE3_TEXT);
+                    $stmt->bindValue(':image_path', $image_destination, SQLITE3_TEXT);
 
                     if ($stmt->execute()) {
-                        echo "Character submitted successfully!";
+                        // Redirect to home page instead of showing a message
+                        header("Location: index.html");
+                        exit();
                     } else {
-                        echo "Error: " . $stmt->error;
+                        echo "Error: Failed to execute the query.";
                     }
 
-                    $stmt->close();
-                    $mysqli->close();
+                    $db->close();
                 } else {
                     echo "Failed to upload image.";
                 }
