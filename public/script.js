@@ -33,22 +33,6 @@ function initApp() {
         .catch(error => {
             console.error('Error loading characters:', error);
         });
-
-    // Add click event listeners
-    if (yesButton && noButton) {
-        yesButton.addEventListener('click', () => {
-            console.log('Yes button clicked');
-            nextCharacter();
-        });
-        
-        noButton.addEventListener('click', () => {
-            console.log('No button clicked');
-            nextCharacter();
-        });
-        console.log('Event listeners attached');
-    } else {
-        console.error('Could not find buttons');
-    }
 }
 
 function updateCharacterDisplay(index) {
@@ -57,10 +41,10 @@ function updateCharacterDisplay(index) {
     const showNameElement = document.getElementById('showName');
     
     const character = globalCharacters[index];
-    if (character) {
+    if (character && imageElement) {
         imageElement.src = character.image;
-        characterNameElement.textContent = character.name;
-        showNameElement.textContent = character.show;
+        if (characterNameElement) characterNameElement.textContent = character.name;
+        if (showNameElement) showNameElement.textContent = character.show;
     }
 }
 
@@ -77,3 +61,86 @@ if (document.readyState === 'loading') {
 } else {
     initApp();
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const yesButton = document.getElementById('yesButton');
+    const noButton = document.getElementById('noButton');
+
+    let yesVotes = 0;
+    let noVotes = 0;
+
+    function updateProgressBars() {
+        const total = yesVotes + noVotes;
+        if (total === 0) return;
+
+        const yesPercentage = (yesVotes / total) * 100;
+        const noPercentage = (noVotes / total) * 100;
+
+        // Update the progress bars and show percentages
+        yesButton.querySelector('.progress').style.width = `${yesPercentage}%`;
+        noButton.querySelector('.progress').style.width = `${noPercentage}%`;
+        
+        // Add percentage text
+        yesButton.querySelector('.progress').textContent = `${Math.round(yesPercentage)}%`;
+        noButton.querySelector('.progress').textContent = `${Math.round(noPercentage)}%`;
+    }
+
+    function handleVote(isYesVote) {
+        if (isLoading || globalCharacters.length === 0) return;
+        
+        if (isYesVote) {
+            yesVotes++;
+        } else {
+            noVotes++;
+        }
+        
+        console.log('Vote registered:', isYesVote ? 'yes' : 'no');
+        
+        // Disable buttons immediately
+        yesButton.disabled = true;
+        noButton.disabled = true;
+        
+        // Show the progress bars
+        updateProgressBars();
+        
+        setTimeout(() => {
+            console.log('Timer fired - starting reset process');
+            
+            // Reset votes
+            yesVotes = 0;
+            noVotes = 0;
+            
+            // Reset buttons more thoroughly
+            [yesButton, noButton].forEach(button => {
+                console.log('Resetting button:', button.id);
+                
+                // Reset progress bar
+                const progressBar = button.querySelector('.progress');
+                console.log('Found progress bar:', !!progressBar);
+                if (progressBar) {
+                    progressBar.style.width = '0%';
+                    progressBar.textContent = '';
+                }
+                
+                // Reset button text
+                const buttonText = button.querySelector('.button-text');
+                console.log('Found button text element:', !!buttonText);
+                if (buttonText) {
+                    buttonText.textContent = button === yesButton ? 'Absolutely' : 'Absolutely Not';
+                }
+                
+                // Reset button state
+                button.disabled = false;
+                button.classList.remove('voted');
+                button.style.backgroundColor = '';
+            });
+
+            // Move to next character after resetting the buttons
+            nextCharacter();
+        }, 5000);  // 5000 milliseconds = 5 seconds
+    }
+    
+
+    yesButton.addEventListener('click', () => handleVote(true));
+    noButton.addEventListener('click', () => handleVote(false));
+});
