@@ -162,6 +162,8 @@ function insertCharacterWithImage(name, show, up_votes, down_votes, imagePath) {
     });
 }
 
+insertCharacterWithImage('Andy', 'Tran', 0, 0, 'public/images/chillguy.jpg');
+    
 function getVotePercentages(characterName) {
     db.get('SELECT up_votes, down_votes FROM characters WHERE name = ?', [characterName], (err, row) => {
         if (err) {
