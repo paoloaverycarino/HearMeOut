@@ -5,7 +5,8 @@
   "main": "script.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "yarn run start"
+    "build":"echo 'Build complete'",
+    "dev": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
@@ -16,5 +17,8 @@
     "path": "^0.12.7",
     "sqlite3": "^5.1.7",
     "yarn": "^1.22.22"
+  },
+  "engines": {
+    "node": "18.19.0"
   }
 }

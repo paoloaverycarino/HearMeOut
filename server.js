@@ -3,6 +3,7 @@ const multer = require('multer');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
+
 const port = process.env.PORT || 3000;
 
 const app = express();
@@ -172,8 +173,8 @@ app.post('/api/vote', express.json(), (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT}`);
 });
 
 // Graceful shutdown
