@@ -1,2 +1,19 @@
-node_modules
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional: dotenv environment variables file
+.env
+.env.local
+.env.*.local
+
+# Database files
 characters.db
+*.db        # This will ignore all .db files if you prefer
