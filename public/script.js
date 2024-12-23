@@ -45,6 +45,9 @@ function updateCharacterDisplay(index) {
         imageElement.src = character.image;
         if (characterNameElement) characterNameElement.textContent = character.name;
         if (showNameElement) showNameElement.textContent = character.show;
+        
+        // Load comments for this character
+        loadComments(character.name);
     }
 }
 
@@ -184,9 +187,123 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(error => {
             console.error('Error submitting vote:', error);
+            // Re-enable buttons if there's an error
+            yesButton.disabled = false;
+            noButton.disabled = false;
         });
     }
     
     yesButton.addEventListener('click', () => handleVote(true));
     noButton.addEventListener('click', () => handleVote(false));
+
+    const commentForm = document.getElementById('submitComment');
+    const commentInput = document.getElementById('commentInput');
+    const commentsContainer = document.getElementById('commentsContainer');
+
+    if (!commentForm || !commentInput || !commentsContainer) {
+        console.error('Required comment elements not found!');
+        return;
+    }
+
+    commentForm.addEventListener('click', (e) => {
+        e.preventDefault();
+        const comment = commentInput.value.trim();
+        if (!comment) {
+            console.log('Empty comment, ignoring');
+            return;
+        }
+
+        const currentCharacter = globalCharacters[currentCharacterIndex];
+        if (!currentCharacter) {
+            console.error('No character selected!');
+            return;
+        }
+
+        console.log('Submitting comment:', {
+            characterName: currentCharacter.name,
+            comment: comment
+        });
+
+        fetch('/api/comments', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                characterName: currentCharacter.name,
+                comment: comment
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Server response:', data);
+            // Add new comment to display
+            const commentElement = document.createElement('div');
+            commentElement.className = 'comment';
+            commentElement.innerHTML = `
+                <div class="comment-text">${comment}</div>
+                <div class="comment-timestamp">${new Date().toLocaleString()}</div>
+            `;
+            
+            // Insert at the top of the comments container
+            commentsContainer.insertBefore(commentElement, commentsContainer.firstChild);
+            
+            // Clear input
+            commentInput.value = '';
+        })
+        .catch(error => {
+            console.error('Error posting comment:', error);
+            // Log the actual response for debugging
+            console.log('Response:', error.response);
+        });
+    });
 });
+
+// Add this function to update comments display
+function loadComments(characterName) {
+    console.log('Loading comments for:', characterName);
+    const commentsContainer = document.getElementById('commentsContainer');
+    if (!commentsContainer) {
+        console.error('Comments container not found!');
+        return;
+    }
+    
+    // Clear existing comments
+    commentsContainer.innerHTML = '';
+    
+    fetch(`/api/comments/${encodeURIComponent(characterName)}`)
+        .then(response => {
+            console.log('Response status:', response.status);
+            return response.json();
+        })
+        .then(comments => {
+            console.log('Received comments:', comments);
+            
+            if (!Array.isArray(comments)) {
+                console.error('Expected array of comments, got:', typeof comments);
+                return;
+            }
+            
+            if (comments.length > 0) {
+                comments.forEach(comment => {
+                    const commentElement = document.createElement('div');
+                    commentElement.className = 'comment';
+                    commentElement.innerHTML = `
+                        <div class="comment-text">${comment.comment_text}</div>
+                        <div class="comment-timestamp">${new Date(comment.timestamp).toLocaleString()}</div>
+                    `;
+                    commentsContainer.appendChild(commentElement);
+                });
+            }
+            // If no comments, container remains empty
+        })
+        .catch(error => {
+            console.error('Error loading comments:', error);
+            // Don't show error message to user, just log it
+        });
+}

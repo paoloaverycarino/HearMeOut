@@ -192,14 +192,6 @@ body {
     margin-bottom: 10px;
     border-radius: 5px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    opacity: 1;
-    transform: translateY(0);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.comment.new-comment {
-    opacity: 0;
-    transform: translateY(20px);
 }
 
 .comment-form {
@@ -230,4 +222,11 @@ body {
 
 #submitComment:hover {
     background-color: #a8b392;
+}
+
+/* Optional: Add timestamp styling */
+.comment-timestamp {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 4px;
 }
