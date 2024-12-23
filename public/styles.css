@@ -21,24 +21,34 @@ body {
 
 .button-container {
     display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 20px;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: 10px;
 }
 
 .choice-button {
-    padding: 10px 20px;
+    width: 100%;
+    padding: 10px;
     font-size: 16px;
     cursor: pointer;
     border-radius: 5px;
     border: none;
-    background-color: #4CAF50;
+    background-color: #000000;
     color: white;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease;
 }
 
 .choice-button:hover {
     background-color: #45a049;
+}
+
+.choice-button.absolutely:hover {
+    background-color: #4CAF50;
+}
+
+.choice-button.absolutely-not:hover {
+    background-color: #ff0000;
 }
 
 .cropped-image {
