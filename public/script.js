@@ -61,11 +61,17 @@ function nextCharacter() {
             buttonContainer.style.display = 'none';
         }
         
-        // Change the image to a thank you message or remove it
+        // Hide the image
         const imageElement = document.querySelector('.Hear-Me-Out');
         if (imageElement) {
             imageElement.style.display = 'none';
         }
+
+        // Hide character name and show name
+        const characterNameElement = document.getElementById('characterName');
+        const showNameElement = document.getElementById('showName');
+        if (characterNameElement) characterNameElement.style.display = 'none';
+        if (showNameElement) showNameElement.style.display = 'none';
         
         // Create and show end message
         const endMessage = document.createElement('div');
@@ -125,36 +131,60 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleVote(isYesVote) {
         if (isLoading || globalCharacters.length === 0) return;
         
-        if (isYesVote) {
-            yesVotes++;
-        } else {
-            noVotes++;
-        }
+        const currentCharacter = globalCharacters[currentCharacterIndex];
         
         // Disable buttons immediately
+        const yesButton = document.getElementById('yesButton');
+        const noButton = document.getElementById('noButton');
         yesButton.disabled = true;
         noButton.disabled = true;
         
-        // Show the progress bars
-        updateProgressBars();
-        
-        // Move to next character immediately after vote
-        setTimeout(() => {
-            // Reset votes
-            yesVotes = 0;
-            noVotes = 0;
-            
-            // Reset buttons
-            [yesButton, noButton].forEach(button => {
-                button.disabled = false;
-                button.querySelector('.button-text').style.display = 'block';
-                button.querySelector('.progress').style.width = '0%';
-                button.querySelector('.progress').textContent = '';
-            });
-            
-            nextCharacter();
+        // Send vote to server
+        fetch('/api/vote', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                characterName: currentCharacter.name,
+                voteType: isYesVote ? 'up' : 'down'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Get the updated percentages
+            fetch(`/api/percentages/${encodeURIComponent(currentCharacter.name)}`)
+                .then(response => response.json())
+                .then(percentages => {
+                    // Hide the button text
+                    yesButton.querySelector('.button-text').style.display = 'none';
+                    noButton.querySelector('.button-text').style.display = 'none';
 
-        }, 2000); // Reduced from 5000 to 2000 for better UX
+                    // Update the progress bars and show percentages
+                    yesButton.querySelector('.progress').style.width = `${percentages.upvotePercentage}%`;
+                    noButton.querySelector('.progress').style.width = `${percentages.downvotePercentage}%`;
+                    
+                    // Add percentage text
+                    yesButton.querySelector('.progress').textContent = `${Math.round(percentages.upvotePercentage)}%`;
+                    noButton.querySelector('.progress').textContent = `${Math.round(percentages.downvotePercentage)}%`;
+                    
+                    // Move to next character after delay
+                    setTimeout(() => {
+                        // Reset buttons
+                        [yesButton, noButton].forEach(button => {
+                            button.disabled = false;
+                            button.querySelector('.button-text').style.display = 'block';
+                            button.querySelector('.progress').style.width = '0%';
+                            button.querySelector('.progress').textContent = '';
+                        });
+                        
+                        nextCharacter();
+                    }, 2000);
+                });
+        })
+        .catch(error => {
+            console.error('Error submitting vote:', error);
+        });
     }
     
 

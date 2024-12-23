@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const upload = multer();
@@ -108,7 +109,51 @@ app.get('/api/images', (req, res) => {
     });
 });
 
-// Add vote handling endpoints
+// Modify the getVotePercentages function to return a Promise
+function getVotePercentages(characterName) {
+    return new Promise((resolve, reject) => {
+        db.get('SELECT up_votes, down_votes FROM characters WHERE name = ?', [characterName], (err, row) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            
+            if (row) {
+                const { up_votes, down_votes } = row;
+                const totalVotes = up_votes + down_votes;
+                
+                if (totalVotes === 0) {
+                    resolve({
+                        upvotePercentage: 0,
+                        downvotePercentage: 0
+                    });
+                } else {
+                    resolve({
+                        upvotePercentage: (up_votes / totalVotes) * 100,
+                        downvotePercentage: (down_votes / totalVotes) * 100
+                    });
+                }
+            } else {
+                reject(new Error(`Character "${characterName}" not found`));
+            }
+        });
+    });
+}
+
+// Add new endpoint to get percentages
+app.get('/api/percentages/:characterName', (req, res) => {
+    const characterName = req.params.characterName;
+    
+    getVotePercentages(characterName)
+        .then(percentages => {
+            res.json(percentages);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+
+// Update the vote handling endpoint
 app.post('/api/vote', express.json(), (req, res) => {
     const { characterName, voteType } = req.body;
     const column = voteType === 'up' ? 'up_votes' : 'down_votes';
@@ -190,3 +235,4 @@ function getVotePercentages(characterName) {
         }
     });
     }
+}
