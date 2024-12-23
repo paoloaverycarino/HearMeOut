@@ -1,8 +1,10 @@
 const express = require('express');
-const app = express();
+const multer = require('multer');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
-const fs = require('fs');
+
+const app = express();
+const upload = multer();
 
 // Database connection
 let db = new sqlite3.Database("characters.db", (err) => {
@@ -13,22 +15,56 @@ let db = new sqlite3.Database("characters.db", (err) => {
     }
 });
 
+// Add a new database connection for submissions
+let submissionsDb = new sqlite3.Database("submissions.db", (err) => {
+    if (err) {
+        console.error(err.message);
+    } else {
+        console.log("Connected to the submissions database.");
+    }
+});
+
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Serve index.html for the root route
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Function to fetch all images from the database
-function fetchAllImages(callback) {
-    const imageArray = [];
-    const query = 'SELECT name, picture FROM characters';
+// Handle form submission
+app.post('/api/submit', upload.single('image'), (req, res) => {
+    const { character_name, source } = req.body;
+    
+    if (!req.file) {
+        res.status(400).json({ error: 'No image uploaded' });
+        return;
+    }
+
+    const imageBuffer = req.file.buffer;
+    const insertQuery = `INSERT INTO submissions (character_name, source, image_path)
+                        VALUES (?, ?, ?)`;
+
+    db.run(insertQuery, [character_name, source, imageBuffer], function(err) {
+        if (err) {
+            console.error('Error inserting submission:', err);
+            res.status(500).json({ error: 'Failed to save submission' });
+            return;
+        }
+        res.redirect('/');
+    });
+});
+
+// Function to fetch all characters from the database
+function fetchAllCharacters(callback) {
+    const characters = [];
+    const query = 'SELECT name, show, picture FROM characters';
     
     db.all(query, [], (err, rows) => {
         if (err) {
-            console.error('Error fetching images:', err);
+            console.error('Error fetching characters:', err);
             return callback(err, null);
         }
         
@@ -46,30 +82,61 @@ function fetchAllImages(callback) {
                     }
                     
                     const base64Image = `data:image/${mimeType};base64,${imageBuffer.toString('base64')}`;
-                    imageArray.push(base64Image);
+                    characters.push({
+                        name: row.name,
+                        show: row.show,
+                        image: base64Image
+                    });
                 } catch (error) {
                     console.error(`Error converting image for ${row.name}:`, error);
                 }
             }
         });
         
-        callback(null, imageArray);
+        callback(null, characters);
     });
 }
 
-// API endpoint to get images
+// API endpoint to get all characters
 app.get('/api/images', (req, res) => {
-    fetchAllImages((err, images) => {
+    fetchAllCharacters((err, characters) => {
         if (err) {
             res.status(500).json({ error: err.message });
             return;
         }
-        res.json({ images });
+        res.json({ characters });
     });
 });
 
-app.listen(3000, () => {
-    console.log('Server running on http://localhost:3000');
+// Add vote handling endpoints
+app.post('/api/vote', express.json(), (req, res) => {
+    const { characterName, voteType } = req.body;
+    const column = voteType === 'up' ? 'up_votes' : 'down_votes';
+    
+    const query = `UPDATE characters SET ${column} = ${column} + 1 WHERE name = ?`;
+    db.run(query, [characterName], function(err) {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json({ success: true });
+    });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+});
+
+// Graceful shutdown
+process.on('SIGINT', () => {
+    db.close((err) => {
+        if (err) {
+            console.error(err.message);
+        }
+        console.log('Closed the database connection.');
+        process.exit(0);
+    });
 });
 
 function insertCharacterWithImage(name, show, up_votes, down_votes, imagePath) {
@@ -95,8 +162,6 @@ function insertCharacterWithImage(name, show, up_votes, down_votes, imagePath) {
     });
 }
 
-insertCharacterWithImage('Andy', 'Tran', 0, 0, 'public/images/chillguy.jpg');
-    
 function getVotePercentages(characterName) {
     db.get('SELECT up_votes, down_votes FROM characters WHERE name = ?', [characterName], (err, row) => {
         if (err) {
