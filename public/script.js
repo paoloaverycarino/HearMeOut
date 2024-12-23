@@ -76,6 +76,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const yesPercentage = (yesVotes / total) * 100;
         const noPercentage = (noVotes / total) * 100;
 
+        // Hide the button text
+        yesButton.querySelector('.button-text').style.display = 'none';
+        noButton.querySelector('.button-text').style.display = 'none';
+
         // Update the progress bars and show percentages
         yesButton.querySelector('.progress').style.width = `${yesPercentage}%`;
         noButton.querySelector('.progress').style.width = `${noPercentage}%`;
@@ -122,10 +126,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     progressBar.textContent = '';
                 }
                 
-                // Reset button text
+                // Remove percentage display
+                const percentageDisplay = button.querySelector('.percentage-display');
+                if (percentageDisplay) {
+                    percentageDisplay.remove();
+                }
+                
+                // Show the button text again
                 const buttonText = button.querySelector('.button-text');
                 console.log('Found button text element:', !!buttonText);
                 if (buttonText) {
+                    buttonText.style.display = 'block';
                     buttonText.textContent = button === yesButton ? 'Absolutely' : 'Absolutely Not';
                 }
                 

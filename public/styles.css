@@ -29,6 +29,7 @@ body {
 
 .choice-button {
     width: 100%;
+    height: 44px;
     padding: 10px;
     font-size: 16px;
     cursor: pointer;
@@ -41,14 +42,45 @@ body {
     overflow: hidden;
 }
 
-.choice-button .progress {
+.percentage-display {
     position: absolute;
-    top: 0;
     left: 0;
+    top: 0;
+    width: 100% !important; /* Force full width */
     height: 100%;
-    width: 0%; /* Initial width, will be updated via JavaScript */
-    transition: width 0.5s ease-out;
-    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Neue Montreal', sans-serif;
+    color: white;
+    z-index: 3;
+    pointer-events: none;
+    font-size: 1.2rem;
+    text-align: center;
+    background: transparent; /* Ensure background is transparent */
+}
+
+.progress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0%;
+    background-color: rgba(255, 255, 255, 0.3);
+    transition: width 0.3s ease;
+    
+    /* Center the percentage text */
+    display: flex;
+    align-items: center;     /* Vertical center */
+    justify-content: center; /* Horizontal center */
+    
+    /* Text styling */
+    font-family: 'Neue Montreal', sans-serif;
+    color: white;
+    font-size: 1.2rem;  /* Adjust size as needed */
+    
+    /* Ensure text is above the background */
+    z-index: 2;
 }
 
 .choice-button .button-text {
