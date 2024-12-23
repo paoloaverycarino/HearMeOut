@@ -118,14 +118,22 @@ function fetchAllImages(callback) {
 // Store images globally so they can be accessed by nextImage
 let globalImages = [];
 
-// Fetch images and store them globally
-fetchAllImages((err, images) => {
-     if (err) {
-         console.error('Error fetching images:', err);
-         return;
-     }
-     globalImages = images;
-     console.log('Global images array length:', globalImages.length); // Debug log
+document.addEventListener('DOMContentLoaded', () => {
+    const yesButton = document.getElementById('yesButton');
+    const noButton = document.getElementById('noButton');
+
+    yesButton.addEventListener('click', () => { nextImage('yes'); });
+    noButton.addEventListener('click', () => { nextImage('no'); });
+
+    // Fetch images and store them globally
+    fetchAllImages((err, images) => {
+        if (err) {
+            console.error('Error fetching images:', err);
+            return;
+        }
+        globalImages = images;
+        console.log('Global images array length:', globalImages.length); // Debug log
+    });
 });
 
 let currentImageIndex = 0;
