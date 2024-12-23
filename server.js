@@ -4,8 +4,21 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
 
+const port = process.env.PORT || 3000;
+
 const app = express();
 const upload = multer();
+
+// Your routes and middleware here
+app.get('/', (req, res) => {
+    res.send('Hello, World!');
+  });
+  
+  // Start server
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+  
 
 // Database connection
 let db = new sqlite3.Database("characters.db", (err) => {
@@ -161,8 +174,8 @@ app.post('/api/vote', express.json(), (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT}`);
 });
 
 // Graceful shutdown
