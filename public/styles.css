@@ -109,8 +109,8 @@ body {
 }
 
 .cropped-image {
-    width: 400px; /* Fixed width */
-    height: 400px; /* Fixed height */
+    width: 350px; /* Fixed width */
+    height: 350px; /* Fixed height */
     object-fit: contain; /* Crop and center the image */
     object-position: center; /* Ensure the image is centered */
 }
