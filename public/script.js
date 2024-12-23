@@ -67,7 +67,37 @@ function updateCharacterDisplay(index) {
 function nextCharacter() {
     if (isLoading || globalCharacters.length === 0) return;
     
-    currentCharacterIndex = (currentCharacterIndex + 1) % globalCharacters.length;
+    // Check if we're at the last character
+    if (currentCharacterIndex === globalCharacters.length - 1) {
+        // Hide the character display elements
+        const centerImageContainer = document.querySelector('.center-image-container');
+        const imageElement = document.querySelector('.Hear-Me-Out');
+        const characterNameElement = document.getElementById('characterName');
+        const showNameElement = document.getElementById('showName');
+        const buttonContainer = document.querySelector('.button-container');
+        
+        // Hide the elements
+        imageElement.style.display = 'none';
+        characterNameElement.style.display = 'none';
+        showNameElement.style.display = 'none';
+        buttonContainer.style.display = 'none';
+        
+        // Create and display the finished message
+        const finishedMessage = document.createElement('h2');
+        finishedMessage.textContent = 'Thanks for voting on all characters!';
+        finishedMessage.style.textAlign = 'center';
+        finishedMessage.style.color = '#333';
+        finishedMessage.style.margin = '20px 0';
+        finishedMessage.style.fontSize = '24px';
+        
+        // Insert the message in the center-image-container
+        centerImageContainer.insertBefore(finishedMessage, imageElement);
+        
+        return;
+    }
+    
+    // If not at the last character, proceed as normal
+    currentCharacterIndex++;
     updateCharacterDisplay(currentCharacterIndex);
 }
 
