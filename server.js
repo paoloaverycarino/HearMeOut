@@ -193,3 +193,38 @@ function insertCharacterWithImage(name, show, up_votes, down_votes, imagePath) {
         });
     });
 }
+
+// Add these endpoints for handling comments
+app.post('/api/comments', (req, res) => {
+    const { characterName, comment } = req.body;
+    console.log('Saving comment for:', characterName);
+    
+    const query = `INSERT INTO comments (character_name, comment_text) VALUES (?, ?)`;
+    db.run(query, [characterName, comment], function(err) {
+        if (err) {
+            console.error('Error saving comment:', err);
+            res.status(500).json({ error: 'Failed to save comment' });
+            return;
+        }
+        res.json({ 
+            success: true, 
+            id: this.lastID 
+        });
+    });
+});
+
+// Endpoint to get comments for a specific character
+app.get('/api/comments/:characterName', (req, res) => {
+    const characterName = req.params.characterName;
+    console.log('Fetching comments for:', characterName);
+    
+    const query = `SELECT * FROM comments WHERE character_name = ? ORDER BY timestamp ASC`;
+    db.all(query, [characterName], (err, rows) => {
+        if (err) {
+            console.error('Error fetching comments:', err);
+            res.status(500).json({ error: 'Failed to fetch comments' });
+            return;
+        }
+        res.json(rows);
+    });
+});

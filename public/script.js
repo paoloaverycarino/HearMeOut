@@ -45,6 +45,9 @@ function updateCharacterDisplay(index) {
         imageElement.src = character.image;
         if (characterNameElement) characterNameElement.textContent = character.name;
         if (showNameElement) showNameElement.textContent = character.show;
+        
+        // Load comments for this character
+        loadCommentsForCharacter(character.name);
     }
 }
 
@@ -219,14 +222,10 @@ document.addEventListener('DOMContentLoaded', () => {
     commentForm.addEventListener('click', (e) => {
         e.preventDefault();
         const comment = commentInput.value.trim();
-        if (!comment) {
-            return; // Don't submit empty comments
-        }
+        if (!comment) return;
 
         const currentCharacter = globalCharacters[currentCharacterIndex];
-        if (!currentCharacter) {
-            return;
-        }
+        if (!currentCharacter) return;
 
         // Create and display the comment immediately
         const commentElement = document.createElement('div');
@@ -234,14 +233,12 @@ document.addEventListener('DOMContentLoaded', () => {
         commentElement.innerHTML = `
             <div class="comment-text">${comment}</div>
         `;
-        
-        // Add to the bottom of the comments container
         commentsContainer.appendChild(commentElement);
         
-        // Clear the input field
+        // Clear input
         commentInput.value = '';
 
-        // Send to server
+        // Save to server
         fetch('/api/comments', {
             method: 'POST',
             headers: {
@@ -254,8 +251,30 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(error => {
             console.error('Error saving comment:', error);
-            // Optionally remove the comment if save failed
             commentElement.remove();
         });
     });
 });
+
+// Add this function to load comments for a character
+function loadCommentsForCharacter(characterName) {
+    const commentsContainer = document.getElementById('commentsContainer');
+    if (!commentsContainer) return;
+    
+    // Clear existing comments
+    commentsContainer.innerHTML = '';
+    
+    fetch(`/api/comments/${encodeURIComponent(characterName)}`)
+        .then(response => response.json())
+        .then(comments => {
+            comments.forEach(comment => {
+                const commentElement = document.createElement('div');
+                commentElement.className = 'comment';
+                commentElement.innerHTML = `
+                    <div class="comment-text">${comment.comment_text}</div>
+                `;
+                commentsContainer.appendChild(commentElement);
+            });
+        })
+        .catch(error => console.error('Error loading comments:', error));
+}
