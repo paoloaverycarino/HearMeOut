@@ -1,8 +1,6 @@
 let globalCharacters = [];
 let currentCharacterIndex = 0;
 let isLoading = true;
-let yesVotes = 0;
-let noVotes = 0;
 
 // Function to initialize the app
 function initApp() {
@@ -12,15 +10,13 @@ function initApp() {
     const yesButton = document.getElementById('yesButton');
     const noButton = document.getElementById('noButton');
     const imageElement = document.querySelector('.Hear-Me-Out');
+    const characterNameElement = document.getElementById('characterName');
+    const showNameElement = document.getElementById('showName');
     
     // Debug logs for DOM elements
     console.log('Yes button found:', !!yesButton);
     console.log('No button found:', !!noButton);
     console.log('Image element found:', !!imageElement);
-
-    // Add click event listeners to buttons
-    yesButton.addEventListener('click', () => handleVote(true));
-    noButton.addEventListener('click', () => handleVote(false));
 
     // Fetch characters from the server
     fetch('/api/images')
@@ -52,14 +48,21 @@ function updateCharacterDisplay(index) {
     }
 }
 
-function handleVote(isYesVote) {
-    console.log('Vote handler called:', isYesVote ? 'yes' : 'no');
+function nextCharacter() {
+    if (isLoading || globalCharacters.length === 0) return;
     
-    if (isLoading || globalCharacters.length === 0) {
-        console.log('Blocked due to loading or no characters');
-        return;
-    }
-    
+    currentCharacterIndex = (currentCharacterIndex + 1) % globalCharacters.length;
+    updateCharacterDisplay(currentCharacterIndex);
+}
+
+// Wait for DOM to be fully loaded before initializing
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+} else {
+    initApp();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
     const yesButton = document.getElementById('yesButton');
     const noButton = document.getElementById('noButton');
 
@@ -72,6 +75,10 @@ function handleVote(isYesVote) {
 
         const yesPercentage = (yesVotes / total) * 100;
         const noPercentage = (noVotes / total) * 100;
+
+        // Hide the button text
+        yesButton.querySelector('.button-text').style.display = 'none';
+        noButton.querySelector('.button-text').style.display = 'none';
 
         // Update the progress bars and show percentages
         yesButton.querySelector('.progress').style.width = `${yesPercentage}%`;
@@ -91,8 +98,6 @@ function handleVote(isYesVote) {
             noVotes++;
         }
         
-        console.log('Vote registered:', isYesVote ? 'yes' : 'no');
-        
         // Disable buttons immediately
         yesButton.disabled = true;
         noButton.disabled = true;
@@ -100,41 +105,22 @@ function handleVote(isYesVote) {
         // Show the progress bars
         updateProgressBars();
         
+        // Move to next character immediately after vote
         setTimeout(() => {
-            console.log('Timer fired - starting reset process');
-            
             // Reset votes
             yesVotes = 0;
             noVotes = 0;
             
-            // Reset buttons more thoroughly
+            // Reset buttons
             [yesButton, noButton].forEach(button => {
-                console.log('Resetting button:', button.id);
-                
-                // Reset progress bar
-                const progressBar = button.querySelector('.progress');
-                console.log('Found progress bar:', !!progressBar);
-                if (progressBar) {
-                    progressBar.style.width = '0%';
-                    progressBar.textContent = '';
-                }
-                
-                // Reset button text
-                const buttonText = button.querySelector('.button-text');
-                console.log('Found button text element:', !!buttonText);
-                if (buttonText) {
-                    buttonText.textContent = button === yesButton ? 'Absolutely' : 'Absolutely Not';
-                }
-                
-                // Reset button state
                 button.disabled = false;
-                button.classList.remove('voted');
-                button.style.backgroundColor = '';
+                button.querySelector('.button-text').style.display = 'block';
+                button.querySelector('.progress').style.width = '0%';
+                button.querySelector('.progress').textContent = '';
             });
-
-            // Move to next character after resetting the buttons
+            
             nextCharacter();
-        }, 5000);  // 5000 milliseconds = 5 seconds
+        }, 2000); // Reduced from 5000 to 2000 for better UX
     }
     
 

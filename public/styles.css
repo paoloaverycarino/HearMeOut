@@ -1,0 +1,167 @@
+body {
+    background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.logo {
+    margin-top: -30px;
+    font-size: 100px; /* Make the text giant */
+    font-family: 'Neue Montreal', Bold;
+    font-weight: bold;
+    color: #333; /* Set text color to your choice */
+    letter-spacing: 5px; /* Optional: Adds space between letters */
+    text-transform: uppercase; /* Optional: Makes the text uppercase */
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.choice-button {
+    width: 100%;
+    height: 44px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    border: none;
+    background-color: #000000;
+    color: white;
+    transition: background-color 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.percentage-display {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important; /* Force full width */
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Neue Montreal', sans-serif;
+    color: white;
+    z-index: 3;
+    pointer-events: none;
+    font-size: 1.2rem;
+    text-align: center;
+    background: transparent; /* Ensure background is transparent */
+}
+
+.progress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0%;
+    background-color: rgba(255, 255, 255, 0.3);
+    transition: width 0.3s ease;
+    
+    /* Center the percentage text */
+    display: flex;
+    align-items: center;     /* Vertical center */
+    justify-content: center; /* Horizontal center */
+    
+    /* Text styling */
+    font-family: 'Neue Montreal', sans-serif;
+    color: white;
+    font-size: 1.2rem;  /* Adjust size as needed */
+    
+    /* Ensure text is above the background */
+    z-index: 2;
+}
+
+.choice-button .button-text {
+    position: relative;
+    z-index: 2;
+}
+
+.choice-button.absolutely .progress {
+    background-color: #4CAF50;
+}
+
+.choice-button.absolutely-not .progress {
+    background-color: #ff0000;
+}
+
+.choice-button:hover {
+    background-color: #45a049;
+}
+
+.choice-button.absolutely:hover {
+    background-color: #4CAF50;
+}
+
+.choice-button.absolutely-not:hover {
+    background-color: #ff0000;
+}
+
+.cropped-image {
+    width: 350px;
+    height: 350px;
+    object-fit: contain; /* Changed from cover to contain to prevent cropping */
+    object-position: center;
+    border-radius: 8px;
+    margin: 0 auto;
+    display: block;
+    background-color: #f0f0f0; /* Optional: adds a background color to empty space */
+}
+
+.submit-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.submit-button:hover {
+    background-color: #45a049;
+}
+
+@font-face {
+    font-family: 'Neue Montreal';
+    src: url('file:///Users/paosmacbook/Downloads/NeueMontreal-Bold.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+.top-nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.center-content {
+    margin-top: 4rem;
+    text-align: center;
+}
+
+.center-image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 20px auto;
+}
