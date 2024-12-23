@@ -62,4 +62,81 @@ function getVotePercentages(characterName) {
   }
 
   // Insert the character with the image
-  insertCharacterWithImage("Ice Bear", 'We Bare Bears', 0, 0, 'images/icebear.png');  
+  //insertCharacterWithImage("Android Robot", 'Android', 0, 0, 'images/android.png');
+
+  // Example usage: Get vote percentages for "Doctor Strange"
+  //getVotePercentages("Doctor Strange's Cape");
+
+  //#####################################################################3
+
+  // Function to fetch all images from the database
+function fetchAllImages(callback) {
+    const imageArray = [];
+    
+    // Modified query to get both name and picture
+    const query = 'SELECT name, picture FROM characters';
+  
+    db.all(query, [], (err, rows) => {
+      if (err) {
+        console.error('Error fetching images:', err);
+        return callback(err, null);
+      }
+      
+      console.log('Number of rows found:', rows.length);
+      
+      rows.forEach((row) => {
+        if (row.picture) {
+          try {
+            // Check if the image data starts with PNG or JPEG magic numbers
+            const imageBuffer = Buffer.from(row.picture);
+            let mimeType = 'jpeg'; // default
+            
+            // Check for PNG signature
+            if (imageBuffer[0] === 0x89 && 
+                imageBuffer[1] === 0x50 && 
+                imageBuffer[2] === 0x4E && 
+                imageBuffer[3] === 0x47) {
+                mimeType = 'png';
+            }
+            
+            const base64Image = `data:image/${mimeType};base64,${imageBuffer.toString('base64')}`;
+            imageArray.push(base64Image);
+            console.log(`Successfully converted ${mimeType} image for ${row.name}`);
+          } catch (error) {
+            console.error(`Error converting image for ${row.name}:`, error);
+          }
+        } else {
+          console.log(`No image data for ${row.name}`);
+        }
+      });
+  
+      console.log('Number of valid images:', imageArray.length);
+      callback(null, imageArray);
+    });
+}
+
+// Store images globally so they can be accessed by nextImage
+let globalImages = [];
+
+// Fetch images and store them globally
+fetchAllImages((err, images) => {
+     if (err) {
+         console.error('Error fetching images:', err);
+         return;
+     }
+     globalImages = images;
+     console.log('Global images array length:', globalImages.length); // Debug log
+});
+
+let currentImageIndex = 0;
+
+function nextImage() {
+    if (globalImages.length === 0) {
+        console.log('No images loaded yet');
+        return;
+    }
+    currentImageIndex = (currentImageIndex + 1) % globalImages.length;
+    const imageElement = document.querySelector('.Hear-Me-Out');
+    imageElement.src = globalImages[currentImageIndex];
+    console.log('Changed to image index:', currentImageIndex);
+}
