@@ -51,7 +51,40 @@ function updateCharacterDisplay(index) {
 function nextCharacter() {
     if (isLoading || globalCharacters.length === 0) return;
     
-    currentCharacterIndex = (currentCharacterIndex + 1) % globalCharacters.length;
+    currentCharacterIndex++;
+    
+    // Check if we've reached the end
+    if (currentCharacterIndex >= globalCharacters.length) {
+        // Hide the buttons
+        const buttonContainer = document.querySelector('.button-container');
+        if (buttonContainer) {
+            buttonContainer.style.display = 'none';
+        }
+        
+        // Change the image to a thank you message or remove it
+        const imageElement = document.querySelector('.Hear-Me-Out');
+        if (imageElement) {
+            imageElement.style.display = 'none';
+        }
+        
+        // Create and show end message
+        const endMessage = document.createElement('div');
+        endMessage.style.textAlign = 'center';
+        endMessage.style.marginTop = '20px';
+        endMessage.style.fontFamily = 'Neue Montreal, sans-serif';
+        endMessage.style.fontSize = '2rem';
+        endMessage.textContent = "That's all for now! Check back later for more.";
+        
+        // Insert the message after the image
+        const centerImageContainer = document.querySelector('.center-image-container');
+        if (centerImageContainer) {
+            centerImageContainer.appendChild(endMessage);
+        }
+        
+        return;
+    }
+    
+    // If not at the end, update display as normal
     updateCharacterDisplay(currentCharacterIndex);
 }
 
@@ -120,6 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             nextCharacter();
+
         }, 2000); // Reduced from 5000 to 2000 for better UX
     }
     
