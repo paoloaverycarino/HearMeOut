@@ -43,3 +43,5 @@ function insertCharacterWithImage(name, show, up_votes, down_votes, imagePath) {
 
   // Insert the character with the image
   insertCharacterWithImage("Ice Bear", 'We Bare Bears', 0, 0, 'images/icebear.png');  
+
+  

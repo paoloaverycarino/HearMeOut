@@ -10,8 +10,8 @@ body {
 }
 
 .logo {
-    margin-top: 40px;
-    font-size: 120px; /* Make the text giant */
+    margin-top: -30px;
+    font-size: 100px; /* Make the text giant */
     font-family: 'Neue Montreal', Bold;
     font-weight: bold;
     color: #333; /* Set text color to your choice */
@@ -48,9 +48,40 @@ body {
     object-position: center; /* Ensure the image is centered */
 }
 
+.submit-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.submit-button:hover {
+    background-color: #45a049;
+}
+
 @font-face {
     font-family: 'Neue Montreal';
     src: url('file:///Users/paosmacbook/Downloads/NeueMontreal-Bold.otf') format('opentype');
     font-weight: bold;
     font-style: normal;
+}
+
+.top-nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.center-content {
+    margin-top: 4rem;
+    text-align: center;
 }
