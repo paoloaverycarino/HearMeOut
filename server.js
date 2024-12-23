@@ -197,33 +197,3 @@ function insertCharacterWithImage(name, show, up_votes, down_votes, imagePath) {
         });
     });
 }
-
-function getVotePercentages(characterName) {
-    db.get('SELECT up_votes, down_votes FROM characters WHERE name = ?', [characterName], (err, row) => {
-        if (err) {
-        console.error('Error fetching data:', err);
-        return;
-        }
-    
-        if (row) {
-        const { up_votes, down_votes } = row;
-        const totalVotes = up_votes + down_votes;
-    
-        if (totalVotes === 0) {
-            console.log('No votes for this character');
-            console.log('Upvote Percentage: 0%');
-            console.log('Downvote Percentage: 0%');
-        } else {
-            // Calculate the percentages
-            const upvotePercentage = (up_votes / totalVotes) * 100;
-            const downvotePercentage = (down_votes / totalVotes) * 100;
-    
-            console.log(`Upvote Percentage for ${characterName}: ${upvotePercentage.toFixed(2)}%`);
-            console.log(`Downvote Percentage for ${characterName}: ${downvotePercentage.toFixed(2)}%`);
-        }
-        } else {
-        console.log(`Character "${characterName}" not found in the database.`);
-        }
-    });
-    }
-
