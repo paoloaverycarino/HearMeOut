@@ -38,6 +38,31 @@ body {
     background-color: #000000;
     color: white;
     transition: background-color 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.choice-button .progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%; /* Initial width, will be updated via JavaScript */
+    transition: width 0.5s ease-out;
+    z-index: 1;
+}
+
+.choice-button .button-text {
+    position: relative;
+    z-index: 2;
+}
+
+.choice-button.absolutely .progress {
+    background-color: #4CAF50;
+}
+
+.choice-button.absolutely-not .progress {
+    background-color: #ff0000;
 }
 
 .choice-button:hover {
