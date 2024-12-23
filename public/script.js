@@ -187,7 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-
     yesButton.addEventListener('click', () => handleVote(true));
     noButton.addEventListener('click', () => handleVote(false));
 });
