@@ -16,15 +16,6 @@ let db = new sqlite3.Database("characters.db", (err) => {
     }
 });
 
-// Add a new database connection for submissions
-let submissionsDb = new sqlite3.Database("submissions.db", (err) => {
-    if (err) {
-        console.error(err.message);
-    } else {
-        console.log("Connected to the submissions database.");
-    }
-});
-
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
 app.use(express.json());
