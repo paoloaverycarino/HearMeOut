@@ -109,10 +109,14 @@ body {
 }
 
 .cropped-image {
-    width: 350px; /* Fixed width */
-    height: 350px; /* Fixed height */
-    object-fit: contain; /* Crop and center the image */
-    object-position: center; /* Ensure the image is centered */
+    width: 350px;
+    height: 350px;
+    object-fit: contain; /* Changed from cover to contain to prevent cropping */
+    object-position: center;
+    border-radius: 8px;
+    margin: 0 auto;
+    display: block;
+    background-color: #f0f0f0; /* Optional: adds a background color to empty space */
 }
 
 .submit-button {
@@ -151,4 +155,13 @@ body {
 .center-content {
     margin-top: 4rem;
     text-align: center;
+}
+
+.center-image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 20px auto;
 }

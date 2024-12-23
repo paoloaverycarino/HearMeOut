@@ -131,8 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
             noVotes++;
         }
         
-        console.log('Vote registered:', isYesVote ? 'yes' : 'no');
-        
         // Disable buttons immediately
         yesButton.disabled = true;
         noButton.disabled = true;
@@ -140,48 +138,23 @@ document.addEventListener('DOMContentLoaded', () => {
         // Show the progress bars
         updateProgressBars();
         
+        // Move to next character immediately after vote
         setTimeout(() => {
-            console.log('Timer fired - starting reset process');
-            
             // Reset votes
             yesVotes = 0;
             noVotes = 0;
             
-            // Reset buttons more thoroughly
+            // Reset buttons
             [yesButton, noButton].forEach(button => {
-                console.log('Resetting button:', button.id);
-                
-                // Reset progress bar
-                const progressBar = button.querySelector('.progress');
-                console.log('Found progress bar:', !!progressBar);
-                if (progressBar) {
-                    progressBar.style.width = '0%';
-                    progressBar.textContent = '';
-                }
-                
-                // Remove percentage display
-                const percentageDisplay = button.querySelector('.percentage-display');
-                if (percentageDisplay) {
-                    percentageDisplay.remove();
-                }
-                
-                // Show the button text again
-                const buttonText = button.querySelector('.button-text');
-                console.log('Found button text element:', !!buttonText);
-                if (buttonText) {
-                    buttonText.style.display = 'block';
-                    buttonText.textContent = button === yesButton ? 'Absolutely' : 'Absolutely Not';
-                }
-                
-                // Reset button state
                 button.disabled = false;
-                button.classList.remove('voted');
-                button.style.backgroundColor = '';
+                button.querySelector('.button-text').style.display = 'block';
+                button.querySelector('.progress').style.width = '0%';
+                button.querySelector('.progress').textContent = '';
             });
-
-            // Move to next character after resetting the buttons
+            
             nextCharacter();
-        }, 3000);  // 5000 milliseconds = 5 seconds
+
+        }, 2000); // Reduced from 5000 to 2000 for better UX
     }
     
 
