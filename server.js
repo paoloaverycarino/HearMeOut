@@ -48,6 +48,7 @@ app.post('/api/submit', upload.single('image'), (req, res) => {
         return;
     }
 
+    // EASTER EGG ITS 3:00 AM
     const imageBuffer = req.file.buffer;
     const insertQuery = `INSERT INTO submissions (character_name, source, image_path)
                         VALUES (?, ?, ?)`;
