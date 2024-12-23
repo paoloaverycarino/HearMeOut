@@ -1,5 +1,5 @@
-let globalImages = [];
-let currentImageIndex = 0;
+let globalCharacters = [];
+let currentCharacterIndex = 0;
 let isLoading = true;
 
 // Function to initialize the app
@@ -10,39 +10,40 @@ function initApp() {
     const yesButton = document.getElementById('yesButton');
     const noButton = document.getElementById('noButton');
     const imageElement = document.querySelector('.Hear-Me-Out');
+    const characterNameElement = document.getElementById('characterName');
+    const showNameElement = document.getElementById('showName');
     
     // Debug logs for DOM elements
     console.log('Yes button found:', !!yesButton);
     console.log('No button found:', !!noButton);
     console.log('Image element found:', !!imageElement);
 
-    // Fetch images from the server
+    // Fetch characters from the server
     fetch('/api/images')
         .then(response => response.json())
         .then(data => {
-            globalImages = data.images;
+            globalCharacters = data.characters;
             isLoading = false;
-            console.log('Loaded images:', globalImages.length);
-            // Load the first image if available
-            if (globalImages.length > 0 && imageElement) {
-                imageElement.src = globalImages[0];
-                console.log('First image loaded');
+            console.log('Loaded characters:', globalCharacters.length);
+            // Load the first character if available
+            if (globalCharacters.length > 0) {
+                updateCharacterDisplay(0);
             }
         })
         .catch(error => {
-            console.error('Error loading images:', error);
+            console.error('Error loading characters:', error);
         });
 
     // Add click event listeners
     if (yesButton && noButton) {
         yesButton.addEventListener('click', () => {
             console.log('Yes button clicked');
-            nextImage();
+            nextCharacter();
         });
         
         noButton.addEventListener('click', () => {
             console.log('No button clicked');
-            nextImage();
+            nextCharacter();
         });
         console.log('Event listeners attached');
     } else {
@@ -50,28 +51,24 @@ function initApp() {
     }
 }
 
-function nextImage() {
-    console.log('nextImage function called');
-    
-    if (isLoading) {
-        console.log('Images are still loading...');
-        return;
-    }
-    
-    if (globalImages.length === 0) {
-        console.log('No images found');
-        return;
-    }
-    
-    // Increment the index and update the image
-    currentImageIndex = (currentImageIndex + 1) % globalImages.length;
+function updateCharacterDisplay(index) {
     const imageElement = document.querySelector('.Hear-Me-Out');
-    if (imageElement) {
-        imageElement.src = globalImages[currentImageIndex];
-        console.log('Changed to image index:', currentImageIndex);
-    } else {
-        console.error('Image element not found');
+    const characterNameElement = document.getElementById('characterName');
+    const showNameElement = document.getElementById('showName');
+    
+    const character = globalCharacters[index];
+    if (character) {
+        imageElement.src = character.image;
+        characterNameElement.textContent = character.name;
+        showNameElement.textContent = character.show;
     }
+}
+
+function nextCharacter() {
+    if (isLoading || globalCharacters.length === 0) return;
+    
+    currentCharacterIndex = (currentCharacterIndex + 1) % globalCharacters.length;
+    updateCharacterDisplay(currentCharacterIndex);
 }
 
 // Wait for DOM to be fully loaded before initializing
