@@ -17,3 +17,4 @@ yarn-error.log
 # Database files
 characters.db
 *.db        # This will ignore all .db files if you prefer
+
